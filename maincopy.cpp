@@ -11,6 +11,7 @@
 using namespace std;
 
 #define MAX 21
+#define MAX2 100
 
 struct City{
     string cityName;
@@ -19,6 +20,7 @@ struct City{
     int isCentral;
 };
 
+vector<string> centralCities;
 vector<City> cities;
 vector<string> cityNames;
 vector<City> newCities;
@@ -161,35 +163,130 @@ void Graph::PrintEdgesKruskal()
 }
 //PART 2 IMPLEMENTATION END.
 
+//PART 4 IMPLEMENTATION BEGIN.
+void readArcs(int arr[MAX2][MAX2], int p[MAX2][MAX2], int m)
+{
+    string origin, destiny;
+    int cost;
+    
+    for(int i = 0; i < MAX; i++)
+    {
+        arr[i][i] = p[i][i] = 0;
+
+        for(int j = 0; j < MAX; j++)
+        {
+            arr[i][j] = arr[j][i] = INT_MAX; //Represents infinity.
+            p[i][j] = p[j][i] = -1; //Respresents non-existance.
+        }
+    }
+
+    int j = 0;
+    for(int i = 0; i < m; i++)
+    {
+        origin = citiesConnectionCosts[j];
+        j++;
+        destiny = citiesConnectionCosts[j];
+        j++;
+        cost = stoi(citiesConnectionCosts[j]);
+        j++;
+
+        int originPos = find(cityNames.begin(), cityNames.end(), origin) - cityNames.begin();
+        int destinyPos = find(cityNames.begin(), cityNames.end(), destiny) - cityNames.begin();
+        arr[originPos][destinyPos] = arr[destinyPos][originPos] = cost;
+    }
+}
+
+void Floyd_Warshall(int arr[MAX2][MAX2], int p[MAX2][MAX2], int n)
+{
+    for(int k = 0; k < n; k++)
+    {
+        for(int i = 0; i < n; i++)
+        {
+            for(int j = 0; j < n; j++)
+            {
+                if(arr[i][k] != INT_MAX && arr[k][j] != INT_MAX && arr[i][k] + arr[k][j] < arr[i][j])
+                {
+                    arr[i][j] = arr[i][k] + arr[k][j];
+                    p[i][j] = k;
+                }
+            }
+        }
+    }
+}
+
+void checkPath(int p[MAX2][MAX2], int origin, int destiny)
+{
+    if (p[origin][destiny] != -1)
+    {
+        checkPath(p, origin, p[origin][destiny]);
+        outfile << (cityNames[p[origin][destiny]]) << "->";
+        checkPath(p, p[origin][destiny], destiny);
+    }
+}
+
+void consults(int arr[MAX2][MAX2], int p[MAX2][MAX2], int q)
+{
+    string origin, destiny;
+    for(int i = 0; i < q; i++)
+    {
+        origin = centralCities[i];
+        for(int j = i + 1; j < q; j++)
+        {
+            destiny = centralCities[j];
+            int originPos = find(cityNames.begin(), cityNames.end(), origin) - cityNames.begin();
+            int destinyPos = find(cityNames.begin(), cityNames.end(), destiny) - cityNames.begin();
+            
+            outfile << origin << " - " << destiny << endl;
+            
+            if(arr[originPos][destinyPos] == INT_MAX) outfile << "No path" << endl;
+            else outfile << "Cost: " << arr[originPos][destinyPos] << " Path: " << origin << "->";
+            checkPath(p, originPos, destinyPos);
+            outfile << destiny << endl << endl;
+        }
+    }
+}
+//PART 4 IMPLEMENTATION END.
+
 int main()
 {
+    int consultsAmount = 0;
     string x;
     fstream newFile;
 
     outfile.open("checking.txt");
 
     //Read input file
-    newFile.open("in01.txt");
+    newFile.open("in02.txt");
 
     //n is amount of nodes, m is amount of arcs, q is amount of new cities.
-    int c, n, m, q;
+    int n, m, q;
 
     newFile >> n >> m >> q;
 
+    int k = -1;
     //Read all cities
     for(int i = 0; i < n * 4; i++)
     {
+        string lastCity;
         newFile >> x;
-        if(i % 4 == 0) cityNames.push_back(x);
-        //getline(newFile, x);
+        if(i % 4 == 0) 
+        {
+            cityNames.push_back(x);
+            k++;
+        }
+
+        if(i % 4 == 3 && x == "1") 
+        {
+            centralCities.push_back(cityNames[k]);
+            consultsAmount++;
+        }
         citiesAndCoordinates.push_back(x);   
     }
-
     cout << "Finished 1" << endl;
+
     for(int i = 0; i < m * 3; i++)
     {
         newFile >> x;
-        //getline(newFile, x);
         citiesConnectionCosts.push_back(x);   
     }
     cout << "Finished 2" << endl;
@@ -197,7 +294,6 @@ int main()
     for(int i = 0; i < q * 3; i++)
     {
         newFile >> x;
-        //getline(newFile, x);
         newCitiesAndCoordinates.push_back(x);   
     }
     cout << "Finished 3" << endl;
@@ -221,6 +317,7 @@ int main()
     //PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2
     //PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2
     string a, b;
+    int c;
     int j = 0;
     for(int i = 0; i < n; i++)
     {
@@ -252,8 +349,6 @@ int main()
         j++;
         c = stoi(citiesConnectionCosts[j]);
         j++;
-
-        //add reading of citynames
     }
 
     j = 0;
@@ -279,6 +374,25 @@ int main()
         newCityNames.push_back(newCityName);
     }
 
+
+    //PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3
+    //PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3
+    //PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3
+    outfile << "3 - Caminos más cortos entre centrales." << endl << endl;
+    
+    //p is intermediate node with largest name.
+    int arr2[MAX2][MAX2], p2[MAX2][MAX2];
+
+    readArcs(arr2, p2, m);
+    Floyd_Warshall(arr2, p2, n);
+    consults(arr2, p2, consultsAmount);
+    outfile << "=========================================================================" << endl;
+    outfile << "=========================================================================" << endl;
+    outfile << endl;
+
+    //PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4
+    //PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4
+    //PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4
     outfile << "4 - Conexión de nuevas colonias." << endl << endl;
 
     for(int i = 0; i < newCities.size(); i++)

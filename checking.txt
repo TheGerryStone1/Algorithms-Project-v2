@@ -1,16 +1,73 @@
 1 - Cableado óptimo de nueva conexión.
 
-Tecnologico - AltaVista 15
-LindaVista - Roma 17
-Roma - AltaVista 18
-Purisima - Tecnologico 40
+Juárez - Pantitlán 4
+Cosmopolita - Pantitlán 25
+Cosmopolita - RomaNorte 25
+Polanco - Condesa 27
+Condesa - Cosmopolita 34
+Merced - Polanco 54
+Polanco - Tlatelolco 58
+Merced - SantaFe 66
+Pantitlán - DelValle 68
 
-Costo total: 90
+Costo total: 361
 
 =========================================================================
 =========================================================================
 
-4 - Conexión de nuevas colonias
+3 - Caminos más cortos entre centrales.
 
-Independencia debe conectarse con Purisima
-Roble debe conectarse con AltaVista
+Condesa - Polanco
+Cost: 27 Path: Condesa->Polanco
+
+Condesa - RomaNorte
+Cost: 59 Path: Condesa->Cosmopolita->RomaNorte
+
+Condesa - Juárez
+Cost: 63 Path: Condesa->Cosmopolita->Juárez
+
+Condesa - SantaFe
+Cost: 126 Path: Condesa->Cosmopolita->Pantitlán->SantaFe
+
+Condesa - Cosmopolita
+Cost: 34 Path: Condesa->Cosmopolita
+
+Polanco - RomaNorte
+Cost: 86 Path: Polanco->Condesa->Cosmopolita->RomaNorte
+
+Polanco - Juárez
+Cost: 90 Path: Polanco->Condesa->Cosmopolita->Juárez
+
+Polanco - SantaFe
+Cost: 120 Path: Polanco->Merced->SantaFe
+
+Polanco - Cosmopolita
+Cost: 61 Path: Polanco->Condesa->Cosmopolita
+
+RomaNorte - Juárez
+Cost: 54 Path: RomaNorte->Cosmopolita->Juárez
+
+RomaNorte - SantaFe
+Cost: 117 Path: RomaNorte->Cosmopolita->Pantitlán->SantaFe
+
+RomaNorte - Cosmopolita
+Cost: 25 Path: RomaNorte->Cosmopolita
+
+Juárez - SantaFe
+Cost: 71 Path: Juárez->Pantitlán->SantaFe
+
+Juárez - Cosmopolita
+Cost: 29 Path: Juárez->Cosmopolita
+
+SantaFe - Cosmopolita
+Cost: 92 Path: SantaFe->Pantitlán->Cosmopolita
+
+=========================================================================
+=========================================================================
+
+4 - Conexión de nuevas colonias.
+
+FelipeAngeles debe conectarse con Pantitlán
+Tlazintla debe conectarse con RomaNorte
+Penitenciaria debe conectarse con DelValle
+Porvenir debe conectarse con RomaNorte
