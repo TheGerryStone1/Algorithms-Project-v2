@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <climits>
 #include <cmath>
+#include "include/tsp_bb.cpp"
 #include <fstream>
 #include <iostream>
 #include <queue>
@@ -74,7 +75,7 @@ struct Graph {
 };
 
 /**
- * @brief populates route map
+ * @brief populates route map used in part 3.
  *
  * @param adj_matrix
  * @param p
@@ -223,7 +224,25 @@ void readArcs(int arr[MAX2][MAX2], int p[MAX2][MAX2], int m) {
  * @param n number of nodes on original graph 
  */
 void createNonCentralGraph(int adj_matrix[MAX2][MAX2], int new_graph[MAX2][MAX2], int n) {
-  
+  // Get number of non-central nodes.
+  int non_central_nodes = 0;
+  vector<int> non_central_nodes_vec;
+  for (int i = 0; i < n; i++) {
+    if (centralCitiesSet.find(cityNames[i]) == centralCitiesSet.end()) {
+      non_central_nodes++;
+      non_central_nodes_vec.push_back(i);
+    }
+  }
+
+  // Create new graph with only non-central nodes.
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      new_graph[i][j] = INT_MAX;
+    }
+  }
+
+  // TSP with non-central nodes ommiting used routes.
+
 }
 
 
