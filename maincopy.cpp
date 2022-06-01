@@ -223,21 +223,25 @@ void readArcs(int arr[MAX2][MAX2], int p[MAX2][MAX2], int m) {
  * @param new_graph reference to graph that will be populated with only non-central nodes
  * @param n number of nodes on original graph 
  */
-void createNonCentralGraph(int adj_matrix[MAX2][MAX2], int new_graph[MAX2][MAX2], int n) {
+vector<vector<int>> createNonCentralGraph(int adj_matrix[MAX2][MAX2], int n) {
   // Get number of non-central nodes.
   int non_central_nodes = 0;
-  vector<int> non_central_nodes_vec;
+  vector<vector<int>> new_graph(n, vector<int>(n, 0));
+  vector<string> non_central_names;
   for (int i = 0; i < n; i++) {
     if (centralCitiesSet.find(cityNames[i]) == centralCitiesSet.end()) {
       non_central_nodes++;
-      non_central_nodes_vec.push_back(i);
+      non_central_names.push_back(cityNames[i]);
     }
   }
 
   // Create new graph with only non-central nodes.
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
-      new_graph[i][j] = INT_MAX;
+      if (i == j)
+        new_graph[i][i] = INT_MAX;
+      else
+        new_graph[i][j] = routes[{cityNames[i], cityNames[j]}].cost;
     }
   }
 
