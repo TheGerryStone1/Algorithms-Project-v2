@@ -5,6 +5,12 @@
 #include <queue>
 #include <vector>
 
+struct route_info {
+  int cost;
+  vector<string> visited_cities;
+};
+
+
 using namespace std;
 /**
  * @brief represents a Branch and Bound solution tree node
@@ -162,7 +168,8 @@ void print_graph(vector<vector<int>>& graph, int n) {
     cout << endl;
   }
 }
-}  // namespace tsp
+}  
+// namespace tsp
 // int main() {
 //   int nodes, arcs;
 //   cin >> nodes >> arcs;

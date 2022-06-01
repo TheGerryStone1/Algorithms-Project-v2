@@ -21,12 +21,6 @@ struct City {
   int yCoord;
   int isCentral;
 };
-
-struct route_info {
-  int cost;
-  vector<string> visited_cities;
-};
-
 vector<string> centralCities;
 vector<City> cities;
 vector<string> cityNames;
@@ -244,11 +238,13 @@ vector<vector<int>> createNonCentralGraph(int adj_matrix[MAX2][MAX2], int n) {
         new_graph[i][j] = routes[{cityNames[i], cityNames[j]}].cost;
     }
   }
-
-  // TSP with non-central nodes ommiting used routes.
-
 }
 
+pair<vector<string>, int> non_central_tsp(vector<vector<int>>& non_central_g) {
+  vector<string> visits;
+  int cost = 0;
+  
+}
 
 /**
  * @brief Get pair's shortest routes
