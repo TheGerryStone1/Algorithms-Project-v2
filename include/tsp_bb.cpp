@@ -1,15 +1,17 @@
 // Francisco Zamora Treviño A01570484
+// TSP Branch and Bound Algorithm. Final Coursework variant.
 #include <algorithm>
 #include <climits>
 #include <iostream>
 #include <queue>
 #include <vector>
-
+#include <unordered_set>
+#include <unordered_map>
+using namespace std;
 struct route_info {
   int cost;
   vector<string> visited_cities;
 };
-
 
 using namespace std;
 /**
@@ -37,6 +39,7 @@ struct node_s {
     visited[1] = true;
   }
 };
+
 /**
  * @brief populates the adjacency with diagonal zeroes and infinite weights
  * where no edge exists O(n^2)
@@ -97,19 +100,50 @@ void calculate_possible_cost(node_s& node, vector<vector<int>>& graph, int n) {
     node.possible_cost += obtained_cost;
   }
 }
+
+/**
+ * @brief returns true if cities in non-central node are not repeated O(n)
+ * 
+ * @param visited_cities 
+ * @param routes 
+ * @param origin 
+ * @param destiny 
+ * @return true 
+ * @return false 
+ */
+bool is_route_valid(unordered_set<string>& visited_cities_set,
+                    map<pair<string, string>, route_info>& routes,
+                    string origin, string destiny) {
+  for (auto city : routes[{origin, destiny}].visited_cities) {
+    if (visited_cities_set.find(city) != visited_cities_set.end()) 
+      return false;
+    else
+      visited_cities_set.insert(city);
+  }
+  return true;
+}
+
 /**
  * @brief Travelling Salesman Branch and Bound implementation
  * O(n^2 * 2^n)
- * @param graph
- * @param n
+ * @param graph adjacency matrix representation
+ * @param n number of items in grapg
+ * @param routes map containing information about route between two points
+ * @param city_names vector containing names of cities indexed by city ID
  * @return int
  */
-int tsp(vector<vector<int>>& graph, int n) {
+int tsp(vector<vector<int>>& graph, int n,
+        unordered_map<pair<string, string>, route_info>& routes,
+        vector<string> city_names) {
   int min_cost = INT_MAX;
   node_s root(n);
   calculate_possible_cost(root, graph, n);
   priority_queue<node_s> q;
   q.push(root);
+
+  unordered_set<string> visited_cities_set;
+  visited_cities_set.reserve(city_names.size());
+
   while (!q.empty()) {
     // Pop queue
     node_s node = q.top();
@@ -118,6 +152,8 @@ int tsp(vector<vector<int>>& graph, int n) {
     if (node.possible_cost < min_cost) {
       // If so, generate all possible children of that node
       for (int i = 1; i <= n; i++) {
+        string curr_city_name = city_names[node.curr_vertex];
+        string next_city_name = city_names[i];
         if (!node.visited[i] && graph[node.curr_vertex][i] != INT_MAX) {
           node_s child = node;
           child.curr_vertex = i;
@@ -168,24 +204,24 @@ void print_graph(vector<vector<int>>& graph, int n) {
     cout << endl;
   }
 }
-}  
-// namespace tsp
-// int main() {
-//   int nodes, arcs;
-//   cin >> nodes >> arcs;
-//   vector<vector<int>> graph(
-//       vector<vector<int>>(nodes + 1, vector<int>(arcs, 0)));
-//   tsp::initialize_graph(graph, nodes);
-//   tsp::read_arcs(graph, arcs);
-//   // print_graph(graph, nodes);
-//   int ans = tsp::tsp(graph, nodes);
-//   cout << (ans != INT_MAX ? to_string(ans) : "INF") << endl;
-// }
-/*
-4 5
-A B 5
-A C 10
-A D 8
-B C 2
-C D 1
-*/
+}  // namespace tsp
+   // namespace tsp
+   // int main() {
+   //   int nodes, arcs;
+   //   cin >> nodes >> arcs;
+   //   vector<vector<int>> graph(
+   //       vector<vector<int>>(nodes + 1, vector<int>(arcs, 0)));
+   //   tsp::initialize_graph(graph, nodes);
+   //   tsp::read_arcs(graph, arcs);
+   //   // print_graph(graph, nodes);
+   //   int ans = tsp::tsp(graph, nodes);
+   //   cout << (ans != INT_MAX ? to_string(ans) : "INF") << endl;
+   // }
+   /*
+   4 5
+   A B 5
+   A C 10
+   A D 8
+   B C 2
+   C D 1
+   */

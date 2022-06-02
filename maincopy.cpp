@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <map>
 #include <climits>
 #include <cmath>
 #include "include/tsp_bb.cpp"
@@ -6,7 +7,7 @@
 #include <iostream>
 #include <queue>
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <unordered_set>
 #include <vector>
 
@@ -31,9 +32,19 @@ vector<string> citiesAndCoordinates;
 vector<string> citiesConnectionCosts;
 vector<string> newCitiesAndCoordinates;
 unordered_set<string> centralCitiesSet;
-unordered_map<pair<string, string>, route_info> routes;
+map<pair<string, string>, route_info> routes;
 
 typedef pair<int, int> iPair;
+
+vector<string> getPath(int p[MAX2][MAX2], int origin, int destiny) {
+  vector<string> path;
+  if (p[origin][destiny] != -1) {
+    getPath(p, origin, p[origin][destiny]);
+    path.push_back(cityNames[p[origin][destiny]]);
+    getPath(p, p[origin][destiny], destiny);
+  }
+  return path;
+}
 
 // PART 2 IMPLEMENTATION BEGIN.
 struct Graph {
@@ -238,13 +249,14 @@ vector<vector<int>> createNonCentralGraph(int adj_matrix[MAX2][MAX2], int n) {
         new_graph[i][j] = routes[{cityNames[i], cityNames[j]}].cost;
     }
   }
+  return new_graph;
 }
 
-pair<vector<string>, int> non_central_tsp(vector<vector<int>>& non_central_g) {
-  vector<string> visits;
-  int cost = 0;
+// pair<vector<string>, int> non_central_tsp(vector<vector<int>>& non_central_g) {
+//   vector<string> visits;
+//   int cost = 0;
   
-}
+// }
 
 /**
  * @brief Get pair's shortest routes
@@ -267,15 +279,6 @@ void Floyd_Warshall(int arr[MAX2][MAX2], int p[MAX2][MAX2], int n) {
   }
 }
 
-vector<string> getPath(int p[MAX2][MAX2], int origin, int destiny) {
-  vector<string> path;
-  if (p[origin][destiny] != -1) {
-    getPath(p, origin, p[origin][destiny]);
-    path.push_back(cityNames[p[origin][destiny]]);
-    getPath(p, p[origin][destiny], destiny);
-  }
-  return path;
-}
 
 void checkPath(int p[MAX2][MAX2], int origin, int destiny) {
   if (p[origin][destiny] != -1) {
