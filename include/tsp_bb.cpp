@@ -4,9 +4,9 @@
 #include <climits>
 #include <iostream>
 #include <queue>
-#include <vector>
-#include <unordered_set>
 #include <unordered_map>
+#include <unordered_set>
+#include <vector>
 using namespace std;
 struct route_info {
   int cost;
@@ -103,19 +103,20 @@ void calculate_possible_cost(node_s& node, vector<vector<int>>& graph, int n) {
 
 /**
  * @brief returns true if cities in non-central node are not repeated O(n)
- * 
- * @param visited_cities 
- * @param routes 
- * @param origin 
- * @param destiny 
- * @return true 
- * @return false 
+ *
+ * @param visited_cities set containing cities visited
+ * @param routes map of routes and hidden intermediary cities
+ * @param origin name of origin city
+ * @param destiny name of destiny city
+ * @return true route does not repeat cities with other routes
+ * @return false route repeats cities with other routes
  */
 bool is_route_valid(unordered_set<string>& visited_cities_set,
                     map<pair<string, string>, route_info>& routes,
                     string origin, string destiny) {
-  for (auto city : routes[{origin, destiny}].visited_cities) {
-    if (visited_cities_set.find(city) != visited_cities_set.end()) 
+  for (string city : routes[{origin, destiny}].visited_cities) {
+    cout << "Checking city " << city << endl;
+    if (visited_cities_set.find(city) != visited_cities_set.end())
       return false;
     else
       visited_cities_set.insert(city);
@@ -133,8 +134,8 @@ bool is_route_valid(unordered_set<string>& visited_cities_set,
  * @return int
  */
 int tsp(vector<vector<int>>& graph, int n,
-        unordered_map<pair<string, string>, route_info>& routes,
-        vector<string> city_names) {
+        map<pair<string, string>, route_info>& routes,
+        vector<string>& city_names) {
   int min_cost = INT_MAX;
   node_s root(n);
   calculate_possible_cost(root, graph, n);
@@ -154,7 +155,10 @@ int tsp(vector<vector<int>>& graph, int n,
       for (int i = 1; i <= n; i++) {
         string curr_city_name = city_names[node.curr_vertex];
         string next_city_name = city_names[i];
-        if (!node.visited[i] && graph[node.curr_vertex][i] != INT_MAX) {
+
+        if (!node.visited[i] && graph[node.curr_vertex][i] != INT_MAX &&
+            is_route_valid(visited_cities_set, routes, curr_city_name,
+                           next_city_name)) {
           node_s child = node;
           child.curr_vertex = i;
           child.last_vertex = node.curr_vertex;

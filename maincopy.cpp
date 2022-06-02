@@ -231,8 +231,10 @@ void readArcs(int arr[MAX2][MAX2], int p[MAX2][MAX2], int m) {
 vector<vector<int>> createNonCentralGraph(int adj_matrix[MAX2][MAX2], int n) {
   // Get number of non-central nodes.
   int non_central_nodes = 0;
-  vector<vector<int>> new_graph(n, vector<int>(n, 0));
+  vector<vector<int>> new_graph(n+1, vector<int>(n, 0));
   vector<string> non_central_names;
+
+  // Count non-central nodes.
   for (int i = 0; i < n; i++) {
     if (centralCitiesSet.find(cityNames[i]) == centralCitiesSet.end()) {
       non_central_nodes++;
@@ -448,9 +450,11 @@ int main() {
   int arr2[MAX2][MAX2], p2[MAX2][MAX2];
 
 
+
   readArcs(arr2, p2, m);
   Floyd_Warshall(arr2, p2, n);
   consults(arr2, p2, consultsAmount);
+
   outfile << "================================================================="
              "========"
           << endl;
@@ -458,10 +462,14 @@ int main() {
              "========"
           << endl;
   outfile << endl;
-
+  // Registers cities between routes to later obscure central cities without losing record of them
   populateRouteMap(arr2, p2, n);
-
-
+  // Graph with non-central cities only
+  vector<vector<int>> new_graph = createNonCentralGraph(arr2, n);
+  
+  int noncentral_cost = tsp::tsp(new_graph, n, routes, cityNames);
+  cout << "Finished 4" << endl;
+  cout << "Hamiltonian path cost of non central nodes: " << noncentral_cost << endl;
 
 
   // PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4
