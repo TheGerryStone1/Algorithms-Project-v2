@@ -10,6 +10,7 @@ using namespace std;
 #define MAX 21
 
 /* Nuevo */ vector<int> tspPath;
+namespace tsp_noncentral {
 
 struct Nodo {
   int niv;
@@ -183,83 +184,97 @@ int tsp(int matAdj[MAX][MAX], int n) {
   }
   return costoOptimo;
 }
+}  // namespace tsp_noncentral
 
-int main() {
-  // n = cantidad de nodos
-  // m = cantidad de arcos
-  int n, m, nc;
-  cin >> n >> m >> nc;
-  int matAdj[MAX][MAX];  // Asumir es base-1 A=1 B=2 ...
+// int main() {
+//   // n = cantidad de nodos
+//   // m = cantidad de arcos
+//   int n, m, nc;
+//   cin >> n >> m >> nc;
+//   int matAdj[MAX][MAX];  // Asumir es base-1 A=1 B=2 ...
 
-  // Inicializa la matriz de adjecencia poniendo INT_MAX en todos los elementos;
-  iniciaMat(matAdj);
+//   // Inicializa la matriz de adjecencia poniendo INT_MAX en todos los elementos;
+//   tsp_noncentral::iniciaMat(matAdj);
 
-  // Mapa que tiene un string de cuidad como llave, da el indice da la matriz de
-  // adjecencia original de la cuidad
-  unordered_map<string, int> cityNamesToIdx;
+//   // Mapa que tiene un string de cuidad como llave, da el indice da la matriz de
+//   // adjecencia original de la cuidad
+//   unordered_map<string, int> cityNamesToIdx;
 
-  // Vector de strings con los nombres de todas las cuidades no centrales
-  vector<string> non_central_cities;
+//   // Vector de strings con los nombres de todas las cuidades no centrales
+//   vector<string> non_central_cities;
 
-  /* Nuevo */ vector<string> cities;
+//   /* Nuevo */ vector<string> cities;
 
-  // arreglo de bool con indice de la cuidad en matriz de adjecencia original
-  // que dice si la cuidad de ese indice es o no central (Creo que no se
-  // utiliza, es posible que se pueda ignorar)
-  bool isCentral[MAX] = {true};
+//   // arreglo de bool con indice de la cuidad en matriz de adjecencia original
+//   // que dice si la cuidad de ese indice es o no central (Creo que no se
+//   // utiliza, es posible que se pueda ignorar)
+//   bool isCentral[MAX] = {true};
 
-  // En este for loop, vamos de 0 hasta la cantidad de nodos y llenamos el mapa
-  // de cityNamesToIdx En el caso de ser una cuidad no central, le damos
-  // pushback a non_central_cities con el nombre de la ciudad actual.
-  for (int i = 0; i < n; i++) {
-    int x, y, centralInt;
-    string tempCityName;
-    cin >> tempCityName >> x >> y >> centralInt;
-    cityNamesToIdx[tempCityName] = i;
-    /* Nuevo */ cities.push_back(tempCityName);
-    if (centralInt == 0) {
-      isCentral[i] = false;
-      non_central_cities.push_back(tempCityName);
-    }
-  }
+//   // En este for loop, vamos de 0 hasta la cantidad de nodos y llenamos el mapa
+//   // de cityNamesToIdx En el caso de ser una cuidad no central, le damos
+//   // pushback a non_central_cities con el nombre de la ciudad actual.
+//   for (int i = 0; i < n; i++) {
+//     int x, y, centralInt;
+//     string tempCityName;
+//     cin >> tempCityName >> x >> y >> centralInt;
+//     cityNamesToIdx[tempCityName] = i;
+//     /* Nuevo */ cities.push_back(tempCityName);
+//     if (centralInt == 0) {
+//       isCentral[i] = false;
+//       non_central_cities.push_back(tempCityName);
+//     }
+//   }
 
-  // En este for loop se leen las conexiones entre cuidades, los valores se
-  // agregan a la matriz de adjecencia.
-  for (int i = 0; i < m; i++) {
-    string tempCity1, tempCity2;
-    int cost;
-    cin >> tempCity1 >> tempCity2 >> cost;
-    matAdj[cityNamesToIdx[tempCity1]][cityNamesToIdx[tempCity2]] =
-        matAdj[cityNamesToIdx[tempCity2]][cityNamesToIdx[tempCity1]] = cost;
-  }
+//   // En este for loop se leen las conexiones entre cuidades, los valores se
+//   // agregan a la matriz de adjecencia.
+//   for (int i = 0; i < m; i++) {
+//     string tempCity1, tempCity2;
+//     int cost;
+//     cin >> tempCity1 >> tempCity2 >> cost;
+//     matAdj[cityNamesToIdx[tempCity1]][cityNamesToIdx[tempCity2]] =
+//         matAdj[cityNamesToIdx[tempCity2]][cityNamesToIdx[tempCity1]] = cost;
+//   }
 
-  // Matriz path, es inicializada con todos los elementos en -1
-  int path[MAX][MAX];
-  for (int i = 0; i < MAX; i++) {
-    for (int j = i + 1; j < MAX; j++) {
-      path[i][j] = path[j][i] = -1;
-    }
-  }
+//     for (int i=0; i<n; i++) {
+//         for (int j=0; j<n; j++) {
+//             cout << matAdj[i][j] << '\t';
+//         }
+//         cout << endl;
+//     }
+//   // Matriz path, es inicializada con todos los elementos en -1
+//   int path[MAX][MAX];
+//   for (int i = 0; i < MAX; i++) {
+//     for (int j = i + 1; j < MAX; j++) {
+//       path[i][j] = path[j][i] = -1;
+//     }
+//   }
 
-  // Modifica la matriz de adjecencia y llena los datos de matriz path.
-  // matriz de adjecencia ahora tiene la ruta mas corta entre dos nodos.
-  floyd(matAdj, path, n);
+//   // Modifica la matriz de adjecencia y llena los datos de matriz path.
+//   // matriz de adjecencia ahora tiene la ruta mas corta entre dos nodos.
+//   tsp_noncentral::floyd(matAdj, path, n);
 
-  // Se crea una nueva matriz de adjecencia para el nuevo grafo de solo cuidades
-  // no centrales.
-  int newMatAdj[MAX][MAX];
-  // Comentarios de esta funcion arriba de la funcion
-  crearNuevaMat(newMatAdj, matAdj, non_central_cities.size(),
-                non_central_cities, cityNamesToIdx);
+//   // Se crea una nueva matriz de adjecencia para el nuevo grafo de solo cuidades
+//   // no centrales.
+//   int newMatAdj[MAX][MAX];
+//   // Comentarios de esta funcion arriba de la funcion
+//   tsp_noncentral::crearNuevaMat(newMatAdj, matAdj, non_central_cities.size(),
+//                 non_central_cities, cityNamesToIdx);
 
-  // TSP Utilizando la nueva matriz de adjecencia con el tamaño de las cuidades
-  // no centrales
-  int costoOptimo = tsp(newMatAdj, non_central_cities.size());
-  if (costoOptimo != INT_MAX) {
-    cout << costoOptimo << endl;
-  } else {
-    cout << "INF" << endl;
-  }
-  /* Nuevo */ printPath(tspPath, path, non_central_cities, cityNamesToIdx,
-                        cities);
-}
+//     // Print newMatAdj
+//     for (int i=0; i<non_central_cities.size(); i++) {
+//         for (int j=0; j<non_central_cities.size(); j++) {
+//             cout << newMatAdj[i][j] << '\t';
+//         }
+//         cout << endl;
+//     }
+//   // TSP Utilizando la nueva matriz de adjecencia con el tamaño de las cuidades
+//   // no centrales
+//   int costoOptimo = tsp_noncentral::tsp(newMatAdj, non_central_cities.size());
+//   if (costoOptimo != INT_MAX) {
+//     cout << costoOptimo << endl;
+//   } else {
+//     cout << "INF" << endl;
+//   }
+//   /* Nuevo */ tsp_noncentral::printPath(tspPath, path, non_central_cities, cityNamesToIdx,
+//                         cities);
+// }

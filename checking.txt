@@ -1,16 +1,11 @@
 1 - Cableado óptimo de nueva conexión.
 
-Juárez - Pantitlán 4
-Cosmopolita - Pantitlán 25
-Cosmopolita - RomaNorte 25
-Polanco - Condesa 27
-Condesa - Cosmopolita 34
-Merced - Polanco 54
-Polanco - Tlatelolco 58
-Merced - SantaFe 66
-Pantitlán - DelValle 68
+Tecnologico - AltaVista 15
+LindaVista - Roma 17
+Roma - AltaVista 18
+Purisima - Tecnologico 40
 
-Costo total: 361
+Costo total: 90
 
 =========================================================================
 =========================================================================
@@ -22,7 +17,5 @@ Costo total: 361
 
 4 - Conexión de nuevas colonias.
 
-FelipeAngeles debe conectarse con Pantitlán
-Tlazintla debe conectarse con RomaNorte
-Penitenciaria debe conectarse con DelValle
-Porvenir debe conectarse con RomaNorte
+Independencia debe conectarse con Purisima
+Roble debe conectarse con AltaVista

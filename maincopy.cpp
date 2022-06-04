@@ -1,15 +1,16 @@
 #include <algorithm>
-#include <map>
 #include <climits>
 #include <cmath>
-#include "include/tsp_bb.cpp"
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <queue>
 #include <string>
-#include <map>
 #include <unordered_set>
 #include <vector>
+
+#include "include/tsp_bb.cpp"
+#include "include/tsp_noncentral.cpp"
 
 using namespace std;
 
@@ -191,7 +192,7 @@ void Graph::PrintEdgesKruskal() {
 // PART 2 IMPLEMENTATION END.
 
 // PART 4 IMPLEMENTATION BEGIN.
-void readArcs(int arr[MAX2][MAX2], int p[MAX2][MAX2], int m) {
+void readArcs(int arr[MAX][MAX], int p[MAX][MAX], int m) {
   string origin, destiny;
   int cost;
 
@@ -223,15 +224,16 @@ void readArcs(int arr[MAX2][MAX2], int p[MAX2][MAX2], int m) {
 
 /**
  * @brief Create a Non Central Graph object
- * 
+ *
  * @param adj_matrix graph that contains both central and non-central nodes
- * @param new_graph reference to graph that will be populated with only non-central nodes
- * @param n number of nodes on original graph 
+ * @param new_graph reference to graph that will be populated with only
+ * non-central nodes
+ * @param n number of nodes on original graph
  */
 vector<vector<int>> createNonCentralGraph(int adj_matrix[MAX2][MAX2], int n) {
   // Get number of non-central nodes.
   int non_central_nodes = 0;
-  vector<vector<int>> new_graph(n+1, vector<int>(n, 0));
+  vector<vector<int>> new_graph(n + 1, vector<int>(n, 0));
   vector<string> non_central_names;
 
   // Count non-central nodes.
@@ -254,10 +256,11 @@ vector<vector<int>> createNonCentralGraph(int adj_matrix[MAX2][MAX2], int n) {
   return new_graph;
 }
 
-// pair<vector<string>, int> non_central_tsp(vector<vector<int>>& non_central_g) {
+// pair<vector<string>, int> non_central_tsp(vector<vector<int>>& non_central_g)
+// {
 //   vector<string> visits;
 //   int cost = 0;
-  
+
 // }
 
 /**
@@ -281,12 +284,53 @@ void Floyd_Warshall(int arr[MAX2][MAX2], int p[MAX2][MAX2], int n) {
   }
 }
 
-
 void checkPath(int p[MAX2][MAX2], int origin, int destiny) {
   if (p[origin][destiny] != -1) {
     checkPath(p, origin, p[origin][destiny]);
     outfile << (cityNames[p[origin][destiny]]) << "->";
     checkPath(p, p[origin][destiny], destiny);
+  }
+}
+
+/**
+ * @brief Reads input file and creates a graph. I really did not want to mess
+ * with previous code.
+ *
+ * @param filename string pointing to file
+ * @param mat int[MAX][MAX] representing a graph
+ * @param n number of items in the graph
+ * @param arcs number of arcs
+ * @param city_map map relating city names to their positions in the graph
+ */
+void get_costs_from_file(string filename, int mat[MAX][MAX], int n, int arcs,
+                         unordered_map<string, int>& city_map, unordered_set<string>& central_cities) {
+  ifstream file(filename);
+  int num, m, c;
+  file >> num >> m >> c;
+  for (int i = 0; i < num; i++) {
+    string name;
+    int x, y, central;
+    file >> name >> x >> y >> central;
+    if (central == 1) {
+      central_cities.insert(name);
+    }
+  }
+
+  for (int i = 0; i < arcs; i++) {
+    string origin, destiny;
+    int cost;
+    file >> origin >> destiny >> cost;
+    cout << origin << " " << destiny << " " << cost << endl;
+    mat[city_map[origin]][city_map[destiny]] = cost;
+    mat[city_map[destiny]][city_map[origin]] = cost;
+}
+  }
+
+void init_path_mat(int p[MAX][MAX], int n) {
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      p[i][j] = -1;
+    }
   }
 }
 
@@ -323,7 +367,7 @@ int main() {
   outfile.open("checking.txt");
 
   // Read input file
-  newFile.open("in02.txt");
+  newFile.open("in01.txt");
 
   // n is amount of nodes, m is amount of arcs, q is amount of new cities.
   int n, m, q;
@@ -457,9 +501,45 @@ int main() {
   outfile << endl;
 
   int matrix[MAX][MAX], paths[MAX][MAX];
+  tsp_noncentral::iniciaMat(matrix);
+  unordered_map<string, int> city_name_index;
+  vector<string> non_centrals;
+
+  for (int i = 0; i < n; i++) {
+    city_name_index.insert({cityNames[i], i});
+  }
+
+  init_path_mat(paths, n);
+  get_costs_from_file("in01.txt", matrix, n, m, city_name_index, centralCitiesSet);
   
+  for (int i = 0; i < n; i++) {
+    if (centralCitiesSet.find(cityNames[i]) == centralCitiesSet.end()) {
+      non_centrals.push_back(cityNames[i]);
+    }
+  }
 
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      cout << matrix[i][j] << '\t';
+    }
+    cout << endl;
+  }
 
+  tsp_noncentral::floyd(matrix, paths, n);
+  int new_matrix[MAX][MAX];
+  tsp_noncentral::crearNuevaMat(new_matrix, matrix, non_centrals.size(),
+                                non_centrals, city_name_index);
+  
+  // Print new_matrix
+  for (int i = 0; i < non_centrals.size(); i++) {
+    for (int j = 0; j < non_centrals.size(); j++) {
+      cout << new_matrix[i][j] << '\t';
+    }
+    cout << endl;
+  }
+
+  int optimal_cost = tsp_noncentral::tsp(new_matrix, non_centrals.size());
+  cout << "Optimal cost: " << optimal_cost << endl;
   // PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4
   // PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4
   // PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4
