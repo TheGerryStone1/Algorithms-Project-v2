@@ -17,51 +17,6 @@ Costo total: 361
 
 3 - Caminos más cortos entre centrales.
 
-Condesa - Polanco
-Cost: 27 Path: Condesa->Polanco
-
-Condesa - RomaNorte
-Cost: 59 Path: Condesa->Cosmopolita->RomaNorte
-
-Condesa - Juárez
-Cost: 63 Path: Condesa->Cosmopolita->Juárez
-
-Condesa - SantaFe
-Cost: 126 Path: Condesa->Cosmopolita->Pantitlán->SantaFe
-
-Condesa - Cosmopolita
-Cost: 34 Path: Condesa->Cosmopolita
-
-Polanco - RomaNorte
-Cost: 86 Path: Polanco->Condesa->Cosmopolita->RomaNorte
-
-Polanco - Juárez
-Cost: 90 Path: Polanco->Condesa->Cosmopolita->Juárez
-
-Polanco - SantaFe
-Cost: 120 Path: Polanco->Merced->SantaFe
-
-Polanco - Cosmopolita
-Cost: 61 Path: Polanco->Condesa->Cosmopolita
-
-RomaNorte - Juárez
-Cost: 54 Path: RomaNorte->Cosmopolita->Juárez
-
-RomaNorte - SantaFe
-Cost: 117 Path: RomaNorte->Cosmopolita->Pantitlán->SantaFe
-
-RomaNorte - Cosmopolita
-Cost: 25 Path: RomaNorte->Cosmopolita
-
-Juárez - SantaFe
-Cost: 71 Path: Juárez->Pantitlán->SantaFe
-
-Juárez - Cosmopolita
-Cost: 29 Path: Juárez->Cosmopolita
-
-SantaFe - Cosmopolita
-Cost: 92 Path: SantaFe->Pantitlán->Cosmopolita
-
 =========================================================================
 =========================================================================
 

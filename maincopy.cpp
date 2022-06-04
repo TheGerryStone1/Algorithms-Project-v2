@@ -447,13 +447,6 @@ int main() {
   outfile << "3 - Caminos más cortos entre centrales." << endl << endl;
 
   // p is intermediate node with largest name.
-  int arr2[MAX2][MAX2], p2[MAX2][MAX2];
-
-
-
-  readArcs(arr2, p2, m);
-  Floyd_Warshall(arr2, p2, n);
-  consults(arr2, p2, consultsAmount);
 
   outfile << "================================================================="
              "========"
@@ -462,14 +455,9 @@ int main() {
              "========"
           << endl;
   outfile << endl;
-  // Registers cities between routes to later obscure central cities without losing record of them
-  populateRouteMap(arr2, p2, n);
-  // Graph with non-central cities only
-  vector<vector<int>> new_graph = createNonCentralGraph(arr2, n);
+
+  int matrix[MAX][MAX], paths[MAX][MAX];
   
-  int noncentral_cost = tsp::tsp(new_graph, n, routes, cityNames);
-  cout << "Finished 4" << endl;
-  cout << "Hamiltonian path cost of non central nodes: " << noncentral_cost << endl;
 
 
   // PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4
