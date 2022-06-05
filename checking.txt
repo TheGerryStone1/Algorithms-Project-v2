@@ -12,16 +12,20 @@ Costo total: 90
 
 2 - La ruta mas optima.
 
+Purisima -> Roma -> AltaVista -> Tecnologico -> Purisima (123)
+
 
 =========================================================================
 =========================================================================
 
 3 - Caminos más cortos entre centrales.
 
+LindaVista - Tecnologico
+Cost: 50 Path: LindaVista->Roma->AltaVista->Tecnologico
+
 =========================================================================
 =========================================================================
 
-Purisima -> Roma -> AltaVista -> Tecnologico -> Purisima
 4 - Conexión de nuevas colonias.
 
 Independencia debe conectarse con Purisima

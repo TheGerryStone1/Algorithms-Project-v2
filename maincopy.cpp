@@ -226,7 +226,7 @@ void Floyd_Warshall(int arr[MAX2][MAX2], int p[MAX2][MAX2], int n) {
   }
 }
 
-void checkPath(int p[MAX2][MAX2], int origin, int destiny) {
+void checkPath(int p[MAX][MAX], int origin, int destiny) {
   if (p[origin][destiny] != -1) {
     checkPath(p, origin, p[origin][destiny]);
     outfile << (cityNames[p[origin][destiny]]) << "->";
@@ -276,7 +276,7 @@ void init_path_mat(int p[MAX][MAX], int n) {
   }
 }
 
-void consults(int arr[MAX2][MAX2], int p[MAX2][MAX2], int q) {
+void consults(int arr[MAX][MAX], int p[MAX][MAX], int q) {
   string origin, destiny;
   for (int i = 0; i < q; i++) {
     origin = centralCities[i];
@@ -378,6 +378,71 @@ int main(int argc, char* argv[]) {
   // PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2
   // PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2
   outfile << "2 - La ruta mas optima." << endl << endl;
+
+  int matrix[MAX][MAX], paths[MAX][MAX];
+  tsp_noncentral::iniciaMat(matrix);
+  unordered_map<string, int> city_name_index;
+  vector<string> non_centrals;
+
+  for (int i = 0; i < n; i++) {
+    city_name_index.insert({cityNames[i], i});
+  }
+
+  init_path_mat(paths, n);
+  read_data(filename, matrix, n, m, city_name_index, centralCitiesSet);
+
+  for (int i = 0; i < n; i++) {
+    if (centralCitiesSet.find(cityNames[i]) == centralCitiesSet.end()) {
+      non_centrals.push_back(cityNames[i]);
+    }
+  }
+
+  tsp_noncentral::floyd(matrix, paths, n);
+  int new_matrix[MAX][MAX];
+  tsp_noncentral::crearNuevaMat(new_matrix, matrix, non_centrals.size(),
+                                non_centrals, city_name_index);
+
+  int optimal_cost = tsp_noncentral::tsp(new_matrix, non_centrals.size());
+  tsp_noncentral::printPath(tsp_noncentral::tspPath, paths, non_centrals,
+                            city_name_index, cityNames);
+
+  // Write shortest path to file
+  for (string city : tsp_noncentral::get_record()) {
+    outfile << city << " -> ";
+  }
+  outfile << non_centrals[0];
+  outfile << " (" << optimal_cost << ")" << endl;
+  outfile << endl;
+
+  cout << "Optimal cost: " << optimal_cost << endl;
+
+  outfile << endl;
+  outfile << "================================================================="
+             "========"
+          << endl;
+  outfile << "================================================================="
+             "========"
+          << endl;
+  outfile << endl;
+  // PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3
+  // PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3
+  // PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3
+  // PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3
+  outfile << "3 - Caminos más cortos entre centrales." << endl << endl;
+  consults(matrix, paths, consultsAmount);
+
+  outfile << "================================================================="
+             "========"
+          << endl;
+  outfile << "================================================================="
+             "========"
+          << endl;
+  outfile << endl;
+  // PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4
+  // PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4
+  // PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4
+  // PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4
+  outfile << "4 - Conexión de nuevas colonias." << endl << endl;
   string a, b;
   int c;
   int j = 0;
@@ -432,72 +497,6 @@ int main(int argc, char* argv[]) {
     newCities.push_back(newTempCity);
     newCityNames.push_back(newCityName);
   }
-
-  outfile << endl;
-  outfile << "================================================================="
-             "========"
-          << endl;
-  outfile << "================================================================="
-             "========"
-          << endl;
-  outfile << endl;
-  // PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3
-  // PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3
-  // PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3
-  // PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3
-  outfile << "3 - Caminos más cortos entre centrales." << endl << endl;
-
-  // p is intermediate node with largest name.
-
-  outfile << "================================================================="
-             "========"
-          << endl;
-  outfile << "================================================================="
-             "========"
-          << endl;
-  outfile << endl;
-
-  int matrix[MAX][MAX], paths[MAX][MAX];
-  tsp_noncentral::iniciaMat(matrix);
-  unordered_map<string, int> city_name_index;
-  vector<string> non_centrals;
-
-  for (int i = 0; i < n; i++) {
-    city_name_index.insert({cityNames[i], i});
-  }
-
-  init_path_mat(paths, n);
-  read_data(filename, matrix, n, m, city_name_index, centralCitiesSet);
-
-  for (int i = 0; i < n; i++) {
-    if (centralCitiesSet.find(cityNames[i]) == centralCitiesSet.end()) {
-      non_centrals.push_back(cityNames[i]);
-    }
-  }
-
-  tsp_noncentral::floyd(matrix, paths, n);
-  int new_matrix[MAX][MAX];
-  tsp_noncentral::crearNuevaMat(new_matrix, matrix, non_centrals.size(),
-                                non_centrals, city_name_index);
-
-  int optimal_cost = tsp_noncentral::tsp(new_matrix, non_centrals.size());
-  tsp_noncentral::printPath(tsp_noncentral::tspPath, paths, non_centrals,
-                            city_name_index, cityNames);
-
-  // Write shortest path to file
-  for (string city : tsp_noncentral::get_record()) {
-    outfile << city << " -> ";
-  }
-  outfile << non_centrals[0];
-  outfile << endl;
-
-  cout << "Optimal cost: " << optimal_cost << endl;
-  // PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4
-  // PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4
-  // PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4
-  // PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4
-  outfile << "4 - Conexión de nuevas colonias." << endl << endl;
-
   for (int i = 0; i < newCities.size(); i++) {
     float minDistance = INT_MAX;
     string tempBestCity = "";
