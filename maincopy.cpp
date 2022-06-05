@@ -1,3 +1,7 @@
+// Rodrigo Zertuche López   A00829401
+// Gerardo Mora Beltrán     A00827128
+// Francisco Zamora Treviño A01570484
+
 #include <algorithm>
 #include <climits>
 #include <cmath>
@@ -312,7 +316,7 @@ int main(int argc, char* argv[]) {
   string x;
   fstream newFile;
 
-  outfile.open("checking.txt");
+  outfile.open("checking2.txt");
 
   // Read input file
   newFile.open(filename);
