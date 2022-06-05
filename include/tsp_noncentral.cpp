@@ -9,8 +9,10 @@ using namespace std;
 
 #define MAX 21
 
-/* Nuevo */ vector<int> tspPath;
+// Stores visited cities in the order of traversal
 namespace tsp_noncentral {
+vector<string> record;
+/* Nuevo */ vector<int> tspPath;
 
 struct Nodo {
   int niv;
@@ -73,6 +75,7 @@ void printCentrals(int origin, int destiny, int path[MAX][MAX],
   if (path[origin][destiny] != -1) {
     printCentrals(origin, path[origin][destiny], path, cities);
     cout << cities[path[origin][destiny]] << " -> ";
+    record.push_back(cities[path[origin][destiny]]);
     printCentrals(path[origin][destiny], destiny, path, cities);
   }
 }
@@ -84,6 +87,7 @@ void printPath(vector<int> tspP, int path[MAX][MAX],
                vector<string> cities) {
   for (int i = 0; i < tspP.size() - 1; i++) {
     cout << non_central_cities[tspP[i]] << " -> ";
+    record.push_back(non_central_cities[tspP[i]]);
     printCentrals(cityNamesToIdx[non_central_cities[tspP[i]]],
                   cityNamesToIdx[non_central_cities[tspP[i + 1]]], path,
                   cities);
@@ -115,6 +119,8 @@ void calculaCostoPosible(Nodo &nodo, int matAdj[MAX][MAX], int n) {
     nodo.costoPos += costoObtenido;
   }
 }
+
+vector<string>& get_record() { return record; }
 
 // Complejidad O(2^n)
 // *MODIFICADO A FUNCIONAR COMENZANDO EN 0 EN LUGAR DE  1*

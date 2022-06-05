@@ -9,7 +9,6 @@
 #include <unordered_set>
 #include <vector>
 
-#include "include/tsp_bb.cpp"
 #include "include/tsp_noncentral.cpp"
 
 using namespace std;
@@ -33,7 +32,6 @@ vector<string> citiesAndCoordinates;
 vector<string> citiesConnectionCosts;
 vector<string> newCitiesAndCoordinates;
 unordered_set<string> centralCitiesSet;
-map<pair<string, string>, route_info> routes;
 
 typedef pair<int, int> iPair;
 
@@ -79,28 +77,6 @@ struct Graph {
   void KruskalMST();
   void PrintEdgesKruskal();
 };
-
-/**
- * @brief populates route map used in part 3.
- *
- * @param adj_matrix
- * @param p
- * @param n_cities
- */
-void populateRouteMap(int adj_matrix[MAX2][MAX2], int paths[MAX2][MAX2],
-                      int n_cities) {
-  for (int i = 0; i < n_cities; i++) {
-    for (int j = i + 1; j < n_cities; j++) {
-      string a_name = cityNames[i];
-      string b_name = cityNames[j];
-      int cost = adj_matrix[i][j];
-      route_info info;
-      info.cost = adj_matrix[i][j];
-      info.visited_cities = getPath(paths, i, j);
-      routes.insert({{a_name, b_name}, info});
-    }
-  }
-}
 
 // Disjoint sets
 struct DisjointSets {
@@ -222,40 +198,6 @@ void readArcs(int arr[MAX][MAX], int p[MAX][MAX], int m) {
   }
 }
 
-/**
- * @brief Create a Non Central Graph object
- *
- * @param adj_matrix graph that contains both central and non-central nodes
- * @param new_graph reference to graph that will be populated with only
- * non-central nodes
- * @param n number of nodes on original graph
- */
-vector<vector<int>> createNonCentralGraph(int adj_matrix[MAX2][MAX2], int n) {
-  // Get number of non-central nodes.
-  int non_central_nodes = 0;
-  vector<vector<int>> new_graph(n + 1, vector<int>(n, 0));
-  vector<string> non_central_names;
-
-  // Count non-central nodes.
-  for (int i = 0; i < n; i++) {
-    if (centralCitiesSet.find(cityNames[i]) == centralCitiesSet.end()) {
-      non_central_nodes++;
-      non_central_names.push_back(cityNames[i]);
-    }
-  }
-
-  // Create new graph with only non-central nodes.
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < n; j++) {
-      if (i == j)
-        new_graph[i][i] = INT_MAX;
-      else
-        new_graph[i][j] = routes[{cityNames[i], cityNames[j]}].cost;
-    }
-  }
-  return new_graph;
-}
-
 // pair<vector<string>, int> non_central_tsp(vector<vector<int>>& non_central_g)
 // {
 //   vector<string> visits;
@@ -302,8 +244,9 @@ void checkPath(int p[MAX2][MAX2], int origin, int destiny) {
  * @param arcs number of arcs
  * @param city_map map relating city names to their positions in the graph
  */
-void get_costs_from_file(string filename, int mat[MAX][MAX], int n, int arcs,
-                         unordered_map<string, int>& city_map, unordered_set<string>& central_cities) {
+void read_data(string filename, int mat[MAX][MAX], int n, int arcs,
+               unordered_map<string, int>& city_map,
+               unordered_set<string>& central_cities) {
   ifstream file(filename);
   int num, m, c;
   file >> num >> m >> c;
@@ -320,11 +263,10 @@ void get_costs_from_file(string filename, int mat[MAX][MAX], int n, int arcs,
     string origin, destiny;
     int cost;
     file >> origin >> destiny >> cost;
-    cout << origin << " " << destiny << " " << cost << endl;
     mat[city_map[origin]][city_map[destiny]] = cost;
     mat[city_map[destiny]][city_map[origin]] = cost;
-}
   }
+}
 
 void init_path_mat(int p[MAX][MAX], int n) {
   for (int i = 0; i < n; i++) {
@@ -359,7 +301,13 @@ void consults(int arr[MAX2][MAX2], int p[MAX2][MAX2], int q) {
 }
 // PART 4 IMPLEMENTATION END.
 
-int main() {
+int main(int argc, char* argv[]) {
+  if (argc != 2) {
+    cout << "Usage: " << argv[0] << " <input_file>" << endl;
+    return 1;
+  }
+  string filename = argv[1];
+
   int consultsAmount = 0;
   string x;
   fstream newFile;
@@ -367,7 +315,7 @@ int main() {
   outfile.open("checking.txt");
 
   // Read input file
-  newFile.open("in01.txt");
+  newFile.open(filename);
 
   // n is amount of nodes, m is amount of arcs, q is amount of new cities.
   int n, m, q;
@@ -429,6 +377,7 @@ int main() {
   // PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2
   // PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2
   // PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2 PARTE 2
+  outfile << "2 - La ruta mas optima." << endl << endl;
   string a, b;
   int c;
   int j = 0;
@@ -484,6 +433,14 @@ int main() {
     newCityNames.push_back(newCityName);
   }
 
+  outfile << endl;
+  outfile << "================================================================="
+             "========"
+          << endl;
+  outfile << "================================================================="
+             "========"
+          << endl;
+  outfile << endl;
   // PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3
   // PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3
   // PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3 PARTE 3
@@ -510,35 +467,30 @@ int main() {
   }
 
   init_path_mat(paths, n);
-  get_costs_from_file("in01.txt", matrix, n, m, city_name_index, centralCitiesSet);
-  
+  read_data(filename, matrix, n, m, city_name_index, centralCitiesSet);
+
   for (int i = 0; i < n; i++) {
     if (centralCitiesSet.find(cityNames[i]) == centralCitiesSet.end()) {
       non_centrals.push_back(cityNames[i]);
     }
   }
 
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < n; j++) {
-      cout << matrix[i][j] << '\t';
-    }
-    cout << endl;
-  }
-
   tsp_noncentral::floyd(matrix, paths, n);
   int new_matrix[MAX][MAX];
   tsp_noncentral::crearNuevaMat(new_matrix, matrix, non_centrals.size(),
                                 non_centrals, city_name_index);
-  
-  // Print new_matrix
-  for (int i = 0; i < non_centrals.size(); i++) {
-    for (int j = 0; j < non_centrals.size(); j++) {
-      cout << new_matrix[i][j] << '\t';
-    }
-    cout << endl;
-  }
 
   int optimal_cost = tsp_noncentral::tsp(new_matrix, non_centrals.size());
+  tsp_noncentral::printPath(tsp_noncentral::tspPath, paths, non_centrals,
+                            city_name_index, cityNames);
+
+  // Write shortest path to file
+  for (string city : tsp_noncentral::get_record()) {
+    outfile << city << " -> ";
+  }
+  outfile << non_centrals[0];
+  outfile << endl;
+
   cout << "Optimal cost: " << optimal_cost << endl;
   // PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4
   // PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4 PARTE 4
@@ -571,5 +523,6 @@ int main() {
             << endl;
     minDistance = INT_MAX;
   }
+  cout << "Done!" << endl;
   return 0;
 }
